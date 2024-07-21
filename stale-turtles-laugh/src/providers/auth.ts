@@ -1,93 +1,46 @@
-import type { AuthProvider } from "@refinedev/core";
+import { AuthProvider } from "@refinedev/core";
 
-// import type { User } from "@/graphql/schema.types";
-// import { disableAutoLogin, enableAutoLogin } from "@/hooks";
+import { API_URL, dataProvider } from "./data";
 
-import { API_BASE_URL, API_URL, client, dataProvider } from "./data";
-
-export const emails = [
-  "michael.scott@dundermifflin.com",
-  "jim.halpert@dundermifflin.com",
-  "pam.beesly@dundermifflin.com",
-  "dwight.schrute@dundermifflin.com",
-  "angela.martin@dundermifflin.com",
-  "stanley.hudson@dundermifflin.com",
-  "phyllis.smith@dundermifflin.com",
-  "kevin.malone@dundermifflin.com",
-  "oscar.martinez@dundermifflin.com",
-  "creed.bratton@dundermifflin.com",
-  "meredith.palmer@dundermifflin.com",
-  "ryan.howard@dundermifflin.com",
-  "kelly.kapoor@dundermifflin.com",
-  "andy.bernard@dundermifflin.com",
-  "toby.flenderson@dundermifflin.com",
-  "shazanahmed259@gmail.com",
-];
-
-const randomEmail = emails[Math.floor(Math.random() * emails.length)];
-
-export const demoCredentials = {
-  email: randomEmail,
+// For demo purposes and to make it easier to test the app, you can use the following credentials
+export const authCredentials = {
+  email: "michael.scott@dundermifflin.com",
   password: "demodemo",
 };
 
 export const authProvider: AuthProvider = {
-  login: async ({ email, providerName, accessToken, refreshToken }) => {
-    if (accessToken && refreshToken) {
-      client.setHeaders({
-        Authorization: `Bearer ${accessToken}`,
-      });
-
-      localStorage.setItem("access_token", accessToken);
-      localStorage.setItem("refresh_token", refreshToken);
-
-      return {
-        success: true,
-        redirectTo: "/",
-      };
-    }
-
-    if (providerName) {
-      window.location.href = `${API_BASE_URL}/auth/${providerName}`;
-
-      return {
-        success: true,
-      };
-    }
-
+  login: async ({ email }) => {
     try {
+      // call the login mutation
+      // dataProvider.custom is used to make a custom request to the GraphQL API
+      // this will call dataProvider which will go through the fetchWrapper function
       const { data } = await dataProvider.custom({
         url: API_URL,
         method: "post",
         headers: {},
         meta: {
           variables: { email },
+          // pass the email to see if the user exists and if so, return the accessToken
           rawQuery: `
-                mutation Login($email: String!) {
-                    login(loginInput: {
-                      email: $email
-                    }) {
-                      accessToken,
-                      refreshToken
-                    }
-                  }
-                `,
+            mutation Login($email: String!) {
+              login(loginInput: { email: $email }) {
+                accessToken
+              }
+            }
+          `,
         },
       });
 
-      client.setHeaders({
-        Authorization: `Bearer ${data.login.accessToken}`,
-      });
-
-      enableAutoLogin(email);
+      // save the accessToken in localStorage
       localStorage.setItem("access_token", data.login.accessToken);
-      localStorage.setItem("refresh_token", data.login.refreshToken);
 
       return {
         success: true,
         redirectTo: "/",
       };
-    } catch (error: any) {
+    } catch (e) {
+      const error = e as Error;
+
       return {
         success: false,
         error: {
@@ -97,125 +50,95 @@ export const authProvider: AuthProvider = {
       };
     }
   },
-  register: async ({ email, password }) => {
-    try {
-      await dataProvider.custom({
-        url: API_URL,
-        method: "post",
-        headers: {},
-        meta: {
-          variables: { email, password },
-          rawQuery: `
-                mutation register($email: String!, $password: String!) {
-                    register(registerInput: {
-                      email: $email
-                        password: $password
-                    }) {
-                        id
-                        email
-                    }
-                  }
-                `,
-        },
-      });
 
-      enableAutoLogin(email);
-
-      return {
-        success: true,
-        redirectTo: `/login?email=${email}`,
-      };
-    } catch (error: any) {
-      return {
-        success: false,
-        error: {
-          message: "message" in error ? error.message : "Register failed",
-          name: "name" in error ? error.name : "Invalid email or password",
-        },
-      };
-    }
-  },
+  // simply remove the accessToken from localStorage for the logout
   logout: async () => {
-    client.setHeaders({
-      Authorization: "",
-    });
-
-    disableAutoLogin();
     localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
 
     return {
       success: true,
       redirectTo: "/login",
     };
   },
+
   onError: async (error) => {
-    if (error?.statusCode === "UNAUTHENTICATED") {
+    // a check to see if the error is an authentication error
+    // if so, set logout to true
+    if (error.statusCode === "UNAUTHENTICATED") {
       return {
         logout: true,
+        ...error,
       };
     }
 
     return { error };
   },
+
   check: async () => {
     try {
+      //  get the identity of the user
+      // this is to know if the user is authenticated or not
       await dataProvider.custom({
         url: API_URL,
         method: "post",
         headers: {},
         meta: {
           rawQuery: `
-                    query Me {
-                        me {
-                          name
-                        }
-                      }
-                `,
+            query Me {
+              me {
+                name
+              }
+            }
+          `,
         },
       });
 
+      // if the user is authenticated, redirect to the home page
       return {
         authenticated: true,
+        redirectTo: "/",
       };
     } catch (error) {
+      // for any other error, redirect to the login page
       return {
         authenticated: false,
+        redirectTo: "/login",
       };
     }
   },
-  forgotPassword: async () => {
-    return {
-      success: true,
-      redirectTo: "/update-password",
-    };
-  },
-  updatePassword: async () => {
-    return {
-      success: true,
-      redirectTo: "/login",
-    };
-  },
+
+  // get the user information
   getIdentity: async () => {
+    const accessToken = localStorage.getItem("access_token");
+
     try {
-      const { data } = await dataProvider.custom<{ me: User }>({
+      // call the GraphQL API to get the user information
+      // we're using me:any because the GraphQL API doesn't have a type for the me query yet.
+      // we'll add some queries and mutations later and change this to User which will be generated by codegen.
+      const { data } = await dataProvider.custom<{ me: any }>({
         url: API_URL,
         method: "post",
-        headers: {},
+        headers: accessToken
+          ? {
+              // send the accessToken in the Authorization header
+              Authorization: `Bearer ${accessToken}`,
+            }
+          : {},
         meta: {
+          // get the user information such as name, email, etc.
           rawQuery: `
-                    query Me {
-                        me {
-                            id,
-                            name,
-                            email,
-                            phone,
-                            jobTitle,
-                            timezone
-                            avatarUrl
-                        }
-                      }
-                `,
+            query Me {
+              me {
+                id
+                name
+                email
+                phone
+                jobTitle
+                timezone
+                avatarUrl
+              }
+            }
+          `,
         },
       });
 
