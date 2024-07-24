@@ -6,9 +6,21 @@ import { Text } from "../text";
 import { useState } from "react";
 import UpcomingEventsSkeleton from "../skeleton/skeleton/upcoming-events";
 import { getDate } from "@/utilities/utilities/helpers";
+import { useList } from "@refinedev/core";
+import { DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY } from "@/graphql/queries";
 const UpcomingEvents = () => {
 
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+
+    //Hook to fetch data from API
+    const { data, isLoading: eventsLoading } = useList({
+        resource: 'events',
+        pagination: { pageSize: 5},
+        meta: {
+            gqlQuery: DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY
+        }
+
+    });
 
     const styles = {
         header: { padding: '8px 16px' },
@@ -33,7 +45,7 @@ const UpcomingEvents = () => {
             }))}
             renderItem={() => <UpcomingEventsSkeleton />}/>
         ) : (
-            <List itemLayout="horizontal" dataSource={[]} renderItem={(item) => {
+            <List itemLayout="horizontal" dataSource={[data?.data || []]} renderItem={(item) => {
                 const renderDate = getDate(item.startDate, item.endDate)
                 return(
                     <List.Item>
