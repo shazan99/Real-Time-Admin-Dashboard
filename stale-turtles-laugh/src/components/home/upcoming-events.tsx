@@ -8,6 +8,7 @@ import UpcomingEventsSkeleton from "../skeleton/skeleton/upcoming-events";
 import { getDate } from "@/utilities/utilities/helpers";
 import { useList } from "@refinedev/core";
 import { DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY } from "@/graphql/queries";
+import dayjs from "dayjs";
 const UpcomingEvents = () => {
 
     const [isLoading, setIsLoading] = useState(false);
@@ -16,6 +17,20 @@ const UpcomingEvents = () => {
     const { data, isLoading: eventsLoading } = useList({
         resource: 'events',
         pagination: { pageSize: 5},
+        sorters:[ 
+            {
+            field: 'startDate',
+            order: 'asc',
+            }
+        ],
+        filters: [
+            {
+                field: 'startDate',
+                operator: 'gte',
+                value: dayjs().format('DD-MM-YYYY')
+
+            }
+        ],
         meta: {
             gqlQuery: DASHBOARD_CALENDAR_UPCOMING_EVENTS_QUERY
         }
@@ -57,10 +72,22 @@ const UpcomingEvents = () => {
                         />
                     </List.Item>
                 )
-            }}>
-                
-            </List>
+            }}
+            />     
         )}
+
+            {!isLoading && data?.data.length === 0 && (
+                <span 
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '220px'
+                    }}
+                >
+                    No Upcoming Events
+                </span>
+            )}
     </Card>
   )
 }
