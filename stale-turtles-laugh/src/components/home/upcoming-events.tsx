@@ -24,7 +24,7 @@ const UpcomingEvents = () => {
             {
                 field: 'startDate',
                 operator: 'gte',
-                value: dayjs().format('DD-MM-YYYY')
+                value: dayjs().format('YYYY-MM-DD')
 
             }
         ],
@@ -57,7 +57,7 @@ const UpcomingEvents = () => {
             }))}
             renderItem={() => <UpcomingEventsSkeleton />}/>
         ) : (
-            <List itemLayout="horizontal" dataSource={[data?.data || []]} renderItem={(item) => {
+            <List itemLayout="horizontal" dataSource={data?.data || []} renderItem={(item) => {
                 const renderDate = getDate(item.startDate, item.endDate)
                 return(
                     <List.Item>
@@ -79,7 +79,10 @@ const UpcomingEvents = () => {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: '220px'
+                        height: '65px',
+                        color: '#111111',
+                        fontWeight: 'bold',
+                        fontFamily: 'inherit'
                     }}
                 >
                     No Upcoming Events
