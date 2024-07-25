@@ -24,6 +24,37 @@ const DashboardTotalCountCard = ({
         data: totalCountVariants[resource].data,
         xField: 'index',
         yField: 'value',
+        appendPadding: [1, 0, 0, 0],
+        padding: 0,
+        syncViewPadding: true,
+        autoFit: true,
+        tooltip: false,
+        animation: false,
+        xAxis: false,
+        yAxis: {
+            tickCount: 12,
+            label: {
+                style: {
+                    stroke: 'transparent'
+                }
+            },
+            grid: {
+                line: {
+                    style: {
+                        stroke: 'transparent'
+                    }
+                }
+            }
+        },
+        smooth: true,
+        line: {
+            color: primaryColor,
+        },
+        areaStyle: () => {
+            return {
+                fill: `l(270) 0:#fff 0.2${secondaryColor} 1:${primaryColor}`
+            }
+        }
     }
   return (
     <Card 
