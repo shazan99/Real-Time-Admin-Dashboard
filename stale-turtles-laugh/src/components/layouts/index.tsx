@@ -8,7 +8,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
     Title={(titleProps) => <ThemedTitleV2 {...titleProps} text="Refine" />}
     >
         {children}
-        index</ThemedLayoutV2>
+        </ThemedLayoutV2>
   )
 }
 
