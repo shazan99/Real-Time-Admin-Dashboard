@@ -6,7 +6,7 @@ import { Area, AreaConfig } from "@ant-design/plots";
 type Props = {
     resource: "companies" | "contacts" | "deals",
     isLoading: boolean,
-    totalCount: number
+    totalCount?: number
 }
 
 const styles = {
