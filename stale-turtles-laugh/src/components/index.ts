@@ -8,6 +8,8 @@ import LatestActivitiesSkeleton from "./skeleton/skeleton/latest-activities";
 
 import DashboardTotalCountCard from "./home/total-count-card";
 
+import LatestActivities from "./home/latest-activities";
+
 export { 
     UpcomingEvents,
     DealsChart,
@@ -19,4 +21,5 @@ export {
     LatestActivitiesSkeleton, 
 
     DashboardTotalCountCard,
+    LatestActivities,
 };
