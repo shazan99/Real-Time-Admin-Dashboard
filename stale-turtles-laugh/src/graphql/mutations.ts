@@ -1,4 +1,9 @@
 import gql from "graphql-tag";
+/*In GraphQL, a mutation is a write operation that modifies data on a server. 
+Mutations are similar to POST, PUT, PATCH, and DELETE requests in REST. 
+They can be used to create, update, or delete data, and can also be used to make changes to multiple records
+or databases in a single request.*/
+
 
 // Mutation to update user
 export const UPDATE_USER_MUTATION = gql`
