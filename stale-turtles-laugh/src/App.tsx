@@ -5,7 +5,7 @@ import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
 import { useNotificationProvider } from "@refinedev/antd";
 import "@refinedev/antd/dist/reset.css";
 
-import { Home, ForgotPassword, Register, Login } from "./pages";
+import { Home, ForgotPassword, Register, Login, CompanyList } from "./pages";
 import { dataProvider, liveProvider, authProvider } from "./providers";
 import routerBindings, {
   CatchAllNavigate,
@@ -56,6 +56,7 @@ function App() {
                   </Authenticated>
                   }>
                     <Route index element={<Home />} />
+                    <Route path="/companies" element={<CompanyList />}/>
                   </Route>
                 </Routes>
                 <RefineKbar />
