@@ -9,7 +9,7 @@ import { getDefaultFilter, useGo } from '@refinedev/core';
 import { Input, Space, Table } from 'antd';
 
 /* @ts-ignore */
-export const CompanyList = () => {
+export const CompanyList = ({ children}: React.PropsWithChildren) => {
 
   const go = useGo();
   const { tableProps, filters } = useTable({
@@ -48,6 +48,7 @@ export const CompanyList = () => {
     }
   })
   return (
+  <div>
     <List
       breadcrumb={false}
       headerButtons={() => (
@@ -113,6 +114,8 @@ export const CompanyList = () => {
         />
       </Table>
     </List>
+    {children}
+  </div>
   )
 }
 
