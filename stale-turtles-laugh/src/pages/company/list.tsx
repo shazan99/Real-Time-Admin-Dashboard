@@ -85,7 +85,7 @@ export const CompanyList = ({ children}: React.PropsWithChildren) => {
           )}
           render={(value, record) => (
             <Space>
-              <CustomAvatar shape="square" name={record.name} src={record.avatarUrl} />
+              <CustomAvatar shape="circle" name={record.name} src={record.avatarUrl} />
               <Text style={{ whiteSpace: 'nowrap'  }}>
                 {record.name}
               </Text>
