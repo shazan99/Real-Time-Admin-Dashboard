@@ -22,6 +22,9 @@ const EditPage = () => {
     const { selectProps, queryResult: queryResultUsers } = useSelect<GetFieldsFromList<UsersSelectQuery>>({
         resource: 'users',
         optionLabel: 'name',
+        pagination: {
+            mode: 'off'
+        },
         meta: {
             gqlQuery: USERS_SELECT_QUERY
         }
@@ -38,7 +41,7 @@ const EditPage = () => {
                 >
                     <Form {...formProps} layout="vertical">
                         <CustomAvatar 
-                            shape="square" 
+                            shape="circle" 
                             src={avatarUrl} 
                             name={getNameInitials(name || '')}
                             style={{width: 96, height:96, marginBottom: '24px'}}/>
