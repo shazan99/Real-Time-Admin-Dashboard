@@ -5,6 +5,7 @@ interface Props{
     data?: UseDraggableArguments['data']
 }
 
+//Kanban Board
 const KanbanItem = ({children, id, data}: React.PropsWithChildren<Props>) => {
 
   const { attributes, listeners, setNodeRef, active} = useDraggable({
