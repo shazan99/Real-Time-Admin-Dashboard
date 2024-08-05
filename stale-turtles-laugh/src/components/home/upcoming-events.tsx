@@ -33,7 +33,7 @@ const UpcomingEvents = () => {
         }
 
     });
-
+ //new syntax for styling as previous is deprecated
     const styles = {
         header: { padding: '8px 16px' },
         body: { padding: '0 1rem' },
