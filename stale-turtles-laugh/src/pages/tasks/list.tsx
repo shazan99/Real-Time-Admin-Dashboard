@@ -12,7 +12,7 @@ import { GetFieldsFromList } from '@refinedev/nestjs-query'
 import React from 'react'
 
 
-const List = () => {
+const List = ({ children }: React.PropsWithChildren) => {
 
   //List to fetch stages of the task
   const { data: stages, isLoading: isLoadingStages } = useList<TaskStage>({
@@ -135,6 +135,7 @@ const List = () => {
                 ))}
             </KanbanBoard>
         </KanbanBoardContainer>
+        {children}
     </>
   )
 }
