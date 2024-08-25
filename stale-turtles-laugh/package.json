@@ -20,7 +20,8 @@
     "graphql-ws": "^5.9.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^6.8.1"
+    "react-router-dom": "^6.8.1",
+    "stale-turtles-laugh": "file:"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
@@ -37,6 +38,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "prettier": "^3.3.3",
+    "refine": "^0.0.1-alpha",
     "typescript": "^5.5.3",
     "vite": "^4.3.1",
     "vite-tsconfig-paths": "^4.3.2"
