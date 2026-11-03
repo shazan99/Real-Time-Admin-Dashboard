@@ -4,8 +4,10 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 
 import { inject } from '@vercel/analytics';
- 
+import { initCleverTap } from "./utilities/clevertap";
+
 inject();
+initCleverTap();
 
 const container = document.getElementById("root") as HTMLElement;
 const root = createRoot(container);
