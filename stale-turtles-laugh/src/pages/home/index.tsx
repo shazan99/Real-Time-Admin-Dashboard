@@ -1,5 +1,6 @@
 import { DashboardTotalCountCard, DealsChart, LatestActivities, UpcomingEvents } from "@/components"
 import { DASHBOARD_TOTAL_COUNTS_QUERY } from "@/graphql/queries"
+import { CT_NATIVE_DISPLAY_DIV } from "@/utilities/clevertap"
 import { DashboardTotalCountsQuery } from "@/graphql/types"
 import { useCustom } from "@refinedev/core"
 import { Col, Row } from "antd"
@@ -15,6 +16,9 @@ export const Home = () => {
   })
   return (
     <div>
+      {/* CleverTap Web Native Display banners/carousels render here (Div ID in the campaign) */}
+      <div id={CT_NATIVE_DISPLAY_DIV} style={{ marginBottom: '32px' }} />
+
       <Row gutter={[32,32]}>
         <Col xs={24} sm={24} xl={8}>
           <DashboardTotalCountCard

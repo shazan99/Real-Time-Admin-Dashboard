@@ -1,6 +1,7 @@
 import { AuthProvider } from "@refinedev/core";
 
 import { API_URL, dataProvider } from "./data";
+import { clevertapEvent, clevertapLogin, clevertapLogout } from "@/utilities/clevertap";
 
 // For demo purposes and to make it easier to test the app, you can use the following credentials
 export const authCredentials = {
@@ -34,6 +35,10 @@ export const authProvider: AuthProvider = {
       // save the accessToken in localStorage
       localStorage.setItem("access_token", data.login.accessToken);
 
+      // identify the user in CleverTap; getIdentity fills in the rest of the profile
+      clevertapLogin({ email });
+      clevertapEvent("Logged In", { Email: email });
+
       return {
         success: true,
         redirectTo: "/",
@@ -54,6 +59,7 @@ export const authProvider: AuthProvider = {
   // simply remove the accessToken from localStorage for the logout
   logout: async () => {
     localStorage.removeItem("access_token");
+    clevertapLogout();
 
     return {
       success: true,
@@ -141,6 +147,9 @@ export const authProvider: AuthProvider = {
           `,
         },
       });
+
+      // also covers sessions that were already logged in before CleverTap was added
+      clevertapLogin(data.me);
 
       return data.me;
     } catch (error) {
